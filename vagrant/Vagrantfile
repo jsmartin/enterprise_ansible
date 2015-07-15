@@ -1,0 +1,123 @@
+# -*- mode: ruby -*-
+# vi: set ft=ruby :
+
+VAGRANTFILE_API_VERSION = "2"
+
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |cluster|
+
+cluster.vm.define "prod-web-1" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "prod-web-1"
+  config.vm.network :private_network, ip: "10.42.0.6"
+end
+
+cluster.vm.define "prod-web-2" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "prod-web-2"
+  config.vm.network :private_network, ip: "10.42.0.7"
+end
+
+cluster.vm.define "prod-web-3" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "prod-web-3"
+  config.vm.network :private_network, ip: "10.42.0.8"
+end
+
+cluster.vm.define "prod-haproxy" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "prod-haproxy"
+  config.vm.network :private_network, ip: "10.42.0.100"
+end
+
+
+cluster.vm.define "staging-web-1" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "staging-web-1"
+  config.vm.network :private_network, ip: "10.43.0.6"
+end
+
+cluster.vm.define "staging-web-2" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "staging-web-2"
+  config.vm.network :private_network, ip: "10.43.0.7"
+end
+
+cluster.vm.define "staging-web-3" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "staging-web-3"
+  config.vm.network :private_network, ip: "10.43.0.8"
+end
+
+cluster.vm.define "staging-haproxy" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "staging-haproxy"
+  config.vm.network :private_network, ip: "10.43.0.100"
+end
+
+
+cluster.vm.define "dev-web-1" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "dev-web-1"
+  config.vm.network :private_network, ip: "10.44.0.6"
+end
+
+
+cluster.vm.define "dev-haproxy" do |config|
+  config.vm.box = "chef/centos-6.6"
+  config.ssh.insert_key = false
+  config.vm.provider :virtualbox do |vb, override|
+    vb.customize ["modifyvm", :id, "--memory", "128"]
+    vb.customize ["modifyvm", :id, "--cpus", "1"]
+  end
+  config.vm.hostname = "dev-haproxy"
+  config.vm.network :private_network, ip: "10.44.0.100"
+end
+
+
+end

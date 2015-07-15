@@ -1,0 +1,49 @@
+## multi-machine, depdendent
+
+VAGRANTFILE_API_VERSION = "2"
+
+web_nodes = 3
+web_names = Array.new
+
+Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
+
+  (1..web_nodes).each do |machine_id|
+    config.vm.define "web-#{machine_id}" do |w|
+      w.vm.hostname = "web-#{machine_id}"
+      web_names.push("web-#{machine_id}")
+      w.vm.box = "chef/centos-6.6"
+      w.ssh.insert_key = false
+      w.vm.network :private_network, ip: "10.10.1.#{10+machine_id}"
+      w.vm.provider :virtualbox do |vb, override|
+        vb.customize ["modifyvm", :id, "--memory", "128"]
+        vb.customize ["modifyvm", :id, "--cpus", "1"]
+      end
+    end
+  end
+
+  config.vm.define "haproxy" do |h|
+    h.vm.hostname = "haproxy-1"
+    h.vm.box = "chef/centos-6.6"
+    h.ssh.insert_key = false
+    h.vm.network :private_network, ip: "10.10.1.100"
+    h.vm.provider :virtualbox do |vb, override|
+      vb.customize ["modifyvm", :id, "--memory", "128"]
+      vb.customize ["modifyvm", :id, "--cpus", "1"]
+    end
+    h.vm.provision :ansible do |ansible|
+      ansible.extra_vars = {
+        foo: "bar",
+      }
+      ansible.groups = {
+      "haproxy" => ["haproxy"],
+      "web" => web_names,
+      "all_groups:children" => ["haproxy", "web"]
+      }
+      ansible.host_key_checking = false
+      ansible.sudo = true
+      ansible.verbose = "v"
+      ansible.playbook = "test.yml"
+      ansible.limit = "all"
+    end
+  end
+end

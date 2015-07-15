@@ -1,0 +1,5 @@
+[webservers]
+stage-web-[1:3]
+
+[haproxy]
+haproxy-1

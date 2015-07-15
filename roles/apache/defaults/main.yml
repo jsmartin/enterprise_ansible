@@ -1,0 +1,4 @@
+---
+# defaults file for apache
+apache_test_message: WELCOME!
+apache_max_keep_alive_requests: 115

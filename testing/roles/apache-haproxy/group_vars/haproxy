@@ -1,0 +1,2 @@
+haproxy_backend_web_group: web
+haproxy_backend_iface: eth1
