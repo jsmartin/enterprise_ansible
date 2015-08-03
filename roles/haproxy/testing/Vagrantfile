@@ -15,7 +15,6 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
     end
   
     r.vm.provision :ansible do |ansible|
-      ansible.inventory_path = "hosts"
       ansible.extra_vars = {
         foo: "bar",
       }

@@ -1,26 +1,26 @@
 # Role Development and Testing
 
 
-## Strategy
-
-Development of roles can be categorized in the following ways:
-
-* Standalone
-* Dependent
-* Multi-machine
 
 
-### Standalone
 
 Standalone roles can be developed in such a way that they do not require input from anything else to test their functionality.  They are supplied a set of sane defaults in their rolename/defaults/main.yml file.
 
 Standalone roles are the fastest way to iterate and develop a role since they are self-contained units.
 
-### Dependent
+Role tests live in 
 
-Dependent roles may need other roles to execute prior to functioning.  Those depedencies may be defined in sequence in the playbook role definition or in the rolename/meta/main.yml file.
+ansible_enterprise/roles/rolename/testing
 
-### Multi-machine
+and are comprised of a Vagrantfile and a playbook.
 
-Development of some roles may require multiple machines -- such as systems that operate as a cluster.  A multi-machine role can use both standalone and dependent type of roles.
- 
+
+Role tests can be executed here by running the `test.sh` command.
+
+`./test.sh -a` 
+
+will run the role tests against all the roles detected.
+
+You may also run the tests against any number of roles you specifiy on the command line:
+
+`./test.sh apache haproxy`
