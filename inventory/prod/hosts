@@ -1,5 +1,5 @@
 [webservers]
-stage-web-[1:3]
+prod-web-[1:3]
 
 [haproxy]
-haproxy-1
+prod-haproxy-1
