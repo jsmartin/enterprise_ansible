@@ -1,5 +1,0 @@
-[webservers]
-prod-web-[1:3]
-
-[haproxy]
-prod-haproxy-1
