@@ -1,2 +1,10 @@
-- name: yum installing haproxy
-  yum: name=haproxy state=installed
+- name: install epel
+  yum: 
+    name: http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    state: present
+
+- name: yum installing haproxy, httplib2
+  yum: name={{ item }} state=installed
+  with_items:
+  - haproxy
+  - python-httplib2

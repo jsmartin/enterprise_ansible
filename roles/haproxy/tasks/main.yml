@@ -13,3 +13,10 @@
 - name: start haproxy service
   service: name=haproxy state=started enabled=yes
 
+- name: get url
+  uri:
+    url: http://localhost
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 10

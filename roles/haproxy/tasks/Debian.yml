@@ -1,6 +1,12 @@
 
-- name: apt installing haproxy
-  apt: name=haproxy update_cache=yes
+- name: apt installing haproxy, httplib2
+  apt: name={{ item }} update_cache=yes
+  with_items:
+  - haproxy
+  - python-httplib2
+
+- name: apt installing httlib2
+  apt: name=python-httlib2
 
 - name: enable haproxy service (deb)
   copy: src=etc_default_haproxy dest=/etc/default/haproxy

@@ -2,7 +2,12 @@
 # tasks file for apache
 - name: stop iptables
   service: name=iptables state=stopped
-  
+
+- name: install epel
+  yum: 
+    name: http://dl.fedoraproject.org/pub/epel/6/x86_64/epel-release-6-8.noarch.rpm
+    state: present
+
 - name: install packages
   yum: name={{ item }} state=present
   with_items: packages
@@ -18,3 +23,11 @@
 - name: start and enable apache service
   service: name=httpd state=started enabled=yes
   tags: service
+
+- name: get url
+  uri:
+    url: http://localhost
+  register: result
+  until: result.status == 200
+  retries: 5
+  delay: 10
