@@ -3,12 +3,11 @@ set +x
 if [[ "$#" -ge "2" ]]; then 
     for item in $@; do
         if [[ $item == '-a' ]]; 
-            then echo "Can't mix -a and module names"
+            then echo "Can't mix \"-a\" and module names"
             exit 1
         fi
     done 
 fi
-
 
 while getopts ":a" opt; do
   case $opt in
