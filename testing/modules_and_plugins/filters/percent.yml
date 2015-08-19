@@ -1,0 +1,12 @@
+- hosts: localhost
+  connection: local
+
+  tasks:
+  
+  - name: test percent filter plugin
+    debug: msg="{{ 100|percent(42) }}"
+    register: result
+
+  - name: assert percent filter plugin works
+    assert:
+      that: result.msg  == "42.0"
