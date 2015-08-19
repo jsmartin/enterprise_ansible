@@ -28,7 +28,7 @@ if [ -z "$roles" ]; then
     done
 fi
 
-set -x
+
 for role in $roles; do
     echo Testing $(basename $role);
     cd $role/testing
