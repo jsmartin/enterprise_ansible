@@ -22,7 +22,7 @@ Vagrant.configure(VAGRANTFILE_API_VERSION) do |config|
       ansible.host_key_checking = false
       ansible.sudo = true
       ansible.verbose = "v"
-      ansible.playbook = "foo.yml"
+      ansible.playbook = "test.yml"
       ansible.limit = "all"
     end
   end
