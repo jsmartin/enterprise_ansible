@@ -1,0 +1,16 @@
+---
+# tasks file for common
+- name: create the foo
+  foo:
+    state: present
+    content: foo
+    path: /tmp/foo
+  register: result
+
+- name: test percent filter plugin
+  debug: msg="{{ 100|percent(42) }}"
+
+- name: install epel
+  yum: 
+    name: https://dl.fedoraproject.org/pub/epel/epel-release-latest-7.noarch.rpm
+    state: present
