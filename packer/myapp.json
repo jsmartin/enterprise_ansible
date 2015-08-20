@@ -1,0 +1,137 @@
+{
+    "variables": {
+        "instance_type": "m3.medium",
+        "official": "no",
+        "product_name": "refapp",
+        "product_version": "1.1",
+        "region": "us-east-1",
+        "source_ami": "ami-96a818fe",
+        "ssh_username": "centos",
+        "ansible_roles_path":  "{{env `ANSIBLE_ROLES_PATH`}}", 
+        "ansible_library_path": "{{env `ANSIBLE_LIBRARY`}}",
+        "ansible_filter_plugins": "{{ env `ANSIBLE_FILTER_PLUGINS`}}",
+        "ansible_staging_directory": "/tmp/packer-provisioner-ansible-local"
+    },
+    "builders": [
+        {
+            "type": "amazon-ebs",
+            "ami_name": "{{user `product_name`}}-{{user `product_version`}}",
+            "ami_description": "{{user `product_name`}} {{user `product_version`}} on Centos 7 x86_64",
+            "instance_type": "{{user `instance_type`}}",
+            "region": "{{user `region`}}",
+            "source_ami": "{{user `source_ami`}}",
+            "ssh_timeout": "5m",
+            "ssh_username": "{{user `ssh_username`}}",
+            "ssh_pty": "true",
+            "tags": {
+                "Name": "{{user `product_name`}} {{user `product_version`}} - {{user `aws_instance_count`}}",
+                "OFFICIAL": "{{user `official`}}",
+                "product_name": "{{user `product_name`}}",
+                "product_version": "{{user `product_version`}}"
+            }
+        },
+        {
+            "type": "virtualbox-ovf",
+            "vm_name": "{{user `product_name`}}-{{ user `product_version` }}",
+            "source_path": "base_boxes/output-virtualbox-iso/centos-7.ovf",
+            "output_directory": "{{user `product_name`}}-{{ user `product_version` }}-ova",
+            "ssh_password": "vagrant",
+            "ssh_username": "vagrant",
+            "ssh_wait_timeout": "50000s",
+            "format": "ova",
+            "headless": "true",
+            "vboxmanage": [
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--memory",
+                    "2048"
+                ],
+                [
+                    "modifyvm",
+                    "{{.Name}}",
+                    "--cpus",
+                    "2"
+                ]
+            ],
+            "shutdown_command": "echo 'vagrant' | sudo -S /sbin/halt -h -p"
+        }
+    ],
+    "provisioners": [
+        {
+            "environment_vars": [
+                "ANSIBLE_REMOTE_TEMP=/tmp",
+                "AWS_INSTANCE_COUNT={{user `aws_instance_count`}}"
+            ],
+            "scripts": [
+                "base_boxes/scripts/install-ansible.sh"
+            ],
+            "type": "shell",
+            "override": {
+                "virtualbox-ovf": {
+                    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+                },
+                "amazon-ebs": {
+                    "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'"
+                }
+            }
+        },
+        {
+            "type": "shell",
+                "inline": [
+                    "mkdir -p {{ user `ansible_staging_directory` }}",
+                    "mkdir -p {{ user `ansible_staging_directory` }}/filter_plugins",
+                    "mkdir -p {{ user `ansible_staging_directory` }}/roles",
+                    "mkdir -p {{ user `ansible_staging_directory` }}/library"
+                ]
+        },
+        {
+        "type": "file",
+        "source": "{{ user `ansible_roles_path` }}/",
+        "destination": "{{ user `ansible_staging_directory` }}/roles"
+        },
+        {
+        "type": "file",
+        "source": "{{ user `ansible_library_path` }}/",
+        "destination": "{{ user `ansible_staging_directory` }}/library"
+        },
+        {
+        "type": "file",
+        "source": "{{ user `ansible_filter_plugins` }}/",
+        "destination": "{{ user `ansible_staging_directory` }}/filter_plugins"
+        },
+        {
+            "playbook_dir": "playbooks",
+            "playbook_file": "playbooks/{{ user `playbook`}}",
+            "extra_arguments": [
+                "--become",
+                "--become-method=sudo"
+            ],
+            "type": "ansible-local"
+        },
+        {
+            "scripts": [
+                "base_boxes/scripts/remove-ansible.sh",
+                "base_boxes/scripts/cleanup.sh"
+            ],
+            "type": "shell",
+            "override": {
+                "virtualbox-ovf": {
+                    "execute_command": "echo 'vagrant' | {{.Vars}} sudo -S -E bash '{{.Path}}'"
+                },
+                "amazon-ebs": {
+                    "execute_command": "{{.Vars}} sudo -E bash '{{.Path}}'"
+                }
+            }
+        }
+    ],
+    "post-processors": [
+        {
+            "type": "vagrant",
+            "only": ["virtualbox-ovf"],
+            "keep_input_artifact": true,
+            "compression_level": 9,
+            "output": "{{user `product_name`}}-{{user `product_version` }}-{{.Provider}}.box"
+        }
+    ]
+}
